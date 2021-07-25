@@ -5,8 +5,10 @@ import random
 import wave
 import pyaudio
 import pandas as pd
+import concurrent.futures as cf
 
 from datetime import datetime
+from tkinter import Label, Tk
 
 
 def get_time():
@@ -14,13 +16,17 @@ def get_time():
     dt_object = datetime.fromtimestamp(time.time())
     d, t = str(dt_object).split('.')[0].split(' ')
     return d, t
-
-
-def play_wav():
-    """Play a random birdsong wave file.
     
-    Prints to console main identifying characteristics
-    for the recording:
+
+def get_info(rand):
+    """Returns info for a specific recording.
+    
+    Params
+    ------
+    rand -- a random integer for the wave files
+    
+    Info
+    -----
     XCode -- specific code, append to https://xeno-canto.org 
              to get specific recording 
     Ebird Code -- the abbreviated bird species code
@@ -29,8 +35,7 @@ def play_wav():
     Recorded On -- date of recording 
     Recorded In -- country of recording
     """
-    rand = random.randint(1, len(waves)-1)
-    rbird = waves[rand]
+    rwave = waves[rand]
     rcode = codes[rand]
     rdf = df[df['xc_id'] == int(rcode)]
 
@@ -39,12 +44,49 @@ def play_wav():
     rec_date = rdf['date'][rdf.index[0]]
     country = rdf['country'][rdf.index[0]]
 
-    print(f'\nXCode: {rcode}\nEbird Code: {ebird_code}\nBird Species: {bird_species}\
-\nRecorded On: {rec_date}\nRecorded In: {country}\n')
+    info = f'\nXCode: {rcode}\nEbird Code: {ebird_code}\nBird Species: {bird_species}\
+\nRecorded On: {rec_date}\nRecorded In: {country}\n'
+    
+    return info, rwave
+
+
+def display_popup(msg, info):
+    """Display a self-destructing popup msg."
+    
+    Args:
+    -----
+    msg -- time, stand or sit message
+    info -- basic info about the recording
+    
+    TODO: add a picture of bird  
+    """
+    root = Tk()
+    prompt = '\n'.join([msg, info])
+    label1 = Label(root, text=prompt, width=len(prompt))
+    label1.pack()
+
+    def popup_box():
+        root.destroy()
+        
+    # 6 secs
+    root.after(6000, popup_box)
+    root.mainloop()
+    
+    
+def play_audio(info, rwave):
+    """Play a bird call for 10 seconds.
+    
+    Args:
+    -----
+    info -- basic info about the recording
+    rwave -- random wave file path for audio playback    
+    """
+
+    print(info)
 
     chunk = 1024
-
-    wf = wave.open(rbird, 'rb')
+    
+    wf = wave.open(rwave, 'rb')
 
     # instantiate PyAudio
     p = pyaudio.PyAudio()
@@ -60,11 +102,13 @@ def play_wav():
 
     # play stream
     T1 = time.time()
+    
     # while len(data) > 0:
-    while time.time() - T1 < 12:
+    # rather: for 10 secs
+    while time.time() - T1 < 10:
         stream.write(data)
         data = wf.readframes(chunk)
-
+    
     # stop stream
     stream.stop_stream()
     stream.close()
@@ -73,27 +117,41 @@ def play_wav():
     p.terminate()
 
 
+def run_processes(msg):
+    """Run both popup and audio processes simultaneously.
+    
+    TODO: make it work, not simultaneous so far... 
+    """
+    rand = random.randint(1, len(waves)-1)
+    info, rwave = get_info(rand)
+    
+    with cf.ThreadPoolExecutor(max_workers=2) as executor:
+        p1 = executor.submit(play_audio(info, rwave), None, None)
+        p2 = executor.submit(display_popup(msg, info), None, None)
+        
+        
 def move_user(direction):
     """Message user to stand up or sit down in two ways:
     1. Playing a birdsong to get user's attention.
     2. Printing instructions to the console.
     """
     if direction == "up":
+        
         day, now = get_time()
-        print(f'{now} - If you\'d be so kind as to stand now. Much appreciated!')
-        print('-'*65)
-        print(f'(Standing for {stand_min} minutes...)')
-        play_wav()
-        time.sleep(stand_sec)
-    elif direction == "down":
+        msg = f'{now} - If you\'d be so kind as to stand now. Much appreciated!'
+        print(msg)
+        
+        run_processes(msg)
+        time.sleep(stand_sec)   
+        
+    else:    
+        
         day, now = get_time()
-        print(f'{now} - That was FANTASTIC work! You may sit now.')
-        print('-'*52)
-        print(f'(Sitting for {sit_min} minutes...)')
-        play_wav()
+        msg = f'{now} - That was FANTASTIC work! You may sit now.'
+        print(msg)
+        
+        run_processes(msg)
         time.sleep(sit_sec)
-    else:
-        pass
         
             
 if __name__ == '__main__':
@@ -110,33 +168,36 @@ if __name__ == '__main__':
             codes.append(wav.split('.')[0][2:])
                 
     # get user input 
+    # TODO: sanitize...    
+    username = input("What do I call you? ")
     sit_min = input("Set sitting minutes: ")
     stand_min = input("Set standing minutes: ")
     times = input("How many times? ")
     
-    # calculate, sanitize
+    # calculate
     sit_sec = float(sit_min)*60
     stand_sec = float(stand_min)*60
     times = int(times)
 
     # start work session
-    print("\nThank you Ms. Wehinger, your wish is my command.")
+    print(f'\nThank you {username}, your wish is my command.')
     print("Please have a seat.\n")
     
     day, start_time = get_time()
     print(f'Day: {day}')
     print(f'Start time: {start_time}\n')
     time.sleep(sit_sec)
-
+    
+    # repeat 'times' times...
     for i in range(times):
         if i+1 == times:
-            move_user("up")
+            move_user('up')
         else:
-            move_user("up")
-            move_user("down")
+            move_user('up')
+            move_user('down')
             
     # end work session
     day, end_time = get_time()
-    print(f'{end_time} - Excellent work all around, how about that break?')
-    print('-'*59)
-    play_wav()
+    msg = f'{end_time} - Excellent work all around {username}, how about that break?'
+    print(msg)  
+    run_processes(msg)

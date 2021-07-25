@@ -10,7 +10,7 @@ import concurrent.futures as cf
 from datetime import datetime
 from tkinter import Label, Tk
 
-
+    
 def get_time():
     """Get the date and time."""
     dt_object = datetime.fromtimestamp(time.time())
@@ -60,10 +60,13 @@ def display_popup(msg, info):
     
     TODO: add a picture of bird  
     """
+    # instantiate Tkinter
     root = Tk()
+    
+    # prepare prompt
     prompt = '\n'.join([msg, info])
-    label1 = Label(root, text=prompt, width=len(prompt))
-    label1.pack()
+    label = Label(root, text=prompt, width=len(prompt))
+    label.pack()
 
     def popup_box():
         root.destroy()
@@ -131,29 +134,29 @@ def run_processes(msg):
         
         
 def move_user(direction):
-    """Message user to stand up or sit down in two ways:
+    """Message user to stand up or sit down:
     1. Playing a birdsong to get user's attention.
     2. Printing instructions to the console.
+    3. Make a popup dialog box appear with info.
     """
     if direction == "up":
-        
+        # get time 
         day, now = get_time()
         msg = f'{now} - If you\'d be so kind as to stand now. Much appreciated!'
         print(msg)
-        
+        # play audio, popup box, wait 
         run_processes(msg)
-        time.sleep(stand_sec)   
-        
+        time.sleep(stand_sec)       
     else:    
-        
+        # get time        
         day, now = get_time()
         msg = f'{now} - That was FANTASTIC work! You may sit now.'
         print(msg)
-        
+        # play audio, popup box, wait        
         run_processes(msg)
         time.sleep(sit_sec)
         
-            
+
 if __name__ == '__main__':
 
     # read metadata
@@ -167,17 +170,48 @@ if __name__ == '__main__':
             waves.append(os.path.join(wav_dir, subdir, wav))
             codes.append(wav.split('.')[0][2:])
                 
-    # get user input 
-    # TODO: sanitize...    
-    username = input("What do I call you? ")
-    sit_min = input("Set sitting minutes: ")
-    stand_min = input("Set standing minutes: ")
-    times = input("How many times? ")
+    # get user input  
+    raw_username = input("What do I call you? ")
+    raw_sit_min = input("Set sitting minutes: ")
+    raw_stand_min = input("Set standing minutes: ")
+    raw_times = input("How many times? ")
     
-    # calculate
+    # TODO: sanitize input for SQL injections and the like
+    #
+    #
+    #
+    #
+    
+    # validate user data
+    username = str(raw_username)
+    
+    if username:
+        pass
+    else:
+        print("Error: must provide a valid 'username'.")
+        exit(1)
+
+    try:
+        sit_min = float(raw_sit_min)
+    except ValueError as e:
+        print("Error: 'sit_min' must be an integer or float.")
+        exit(1)
+      
+    try:
+        stand_min = float(raw_stand_min)
+    except ValueError as e:
+        print("Error: 'stand_min' must be an integer or float.")
+        exit(1)
+    
+    try:
+        times = int(raw_times)
+    except ValueError as e:
+        print("Error: 'times' must be an integer.")
+        exit(1)
+        
+    # calculate secs
     sit_sec = float(sit_min)*60
     stand_sec = float(stand_min)*60
-    times = int(times)
 
     # start work session
     print(f'\nThank you {username}, your wish is my command.')
@@ -200,4 +234,5 @@ if __name__ == '__main__':
     day, end_time = get_time()
     msg = f'{end_time} - Excellent work all around {username}, how about that break?'
     print(msg)  
+    # play audio, popup box	
     run_processes(msg)

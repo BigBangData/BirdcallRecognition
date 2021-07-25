@@ -3,6 +3,7 @@ $ conda activate py38
 $ pip install wave
 $ pip install tk 
 $ pip install pyaudio
+$ pip install jsonschema
 $ conda install pandas
 $ conda install jupyter # not needed for main .py file
 $ conda list --explicit > spec-file.txt

@@ -23,12 +23,17 @@ She's also a bird-watching geek.
 <p align="center"><img src="img/birdwatcher.png" width=300></p>
 <p align="center" style="font-size: 12px">Image By <a href="https://pixabay.com/users/clker-free-vector-images-3736/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=40093">Clker-Free-Vector-Images</a></a>
 
-I created a simple timer that randomly draws from a collection of birdcalls and plays one, while also displaying some information about that bird.
+I created a simple timer that randomly draws from a collection of birdcalls and plays one, while also displaying some information about that bird, and its picture.
 
+*DISCLAIMER: I am not responsible for any brain damage associated with the following logic and/or joke.*
+
+My best half insists, with great joy (undoubtedly at my suffering) that by hearing the birdcall **and** seeing the bird, she will have "killed two birds with one stone" - a magical metaphor for learning the name, appearance, and song of a bird all at once.
 
 ---
 
 ## Demo
+
+REDO... use pictures!
 
 Here's a brief demo picture of the timer after a quick run using sub-minute wait times.
 <p align="center"><img src="img/demo.png"></p>

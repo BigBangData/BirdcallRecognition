@@ -1,6 +1,7 @@
 # Birdcall Recognition
 
-#### A repo for all birdy things.
+**A repo for all sorts of birdy things.**
+
 <p align="center"><img src="img/siriema.jpg" width=300></p>
 <p align="center" style="font-size: 12px">Siriema hatchling by <a href="https://pixabay.com/users/jrperes-103619/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=634171">Junior Peres Junior</a> from <a href="https://pixabay.com/?utm_source=link-attribution&amp;utm_medium=referral&amp;utm_campaign=image&amp;utm_content=634171">Pixabay</a></p>
   
@@ -26,3 +27,41 @@ I created a simple timer that randomly draws from a collection of birdcalls and 
 
 
 ---
+
+## Demo
+
+Here's a brief demo picture of the timer after a quick run using sub-minute wait times.
+<p align="center"><img src="img/demo.png"></p>
+I'm hoping you can guess how the timer works - failing that, you could guess what the bright dot on my desktop backgroud is.
+
+---
+
+## Running the Timer 
+
+TODO...
+
+---
+
+## Reproducing the Timer 
+
+TODO...
+
+---
+
+## Limitations and Future Steps
+
+TODO...
+
+---
+
+
+
+
+
+
+
+
+
+
+
+

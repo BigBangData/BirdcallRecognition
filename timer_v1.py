@@ -25,7 +25,7 @@ import pandas as pd
 import concurrent.futures as cf
 
 from datetime import datetime
-from tkinter import Label, Tk, Canvas, PhotoImage
+from tkinter import Label, Tk
 
     
 def get_time():
@@ -82,17 +82,12 @@ def display_popup(msg, info):
     
     # prepare prompt
     prompt = '\n'.join([msg, info])
-    label = Label(root, text=prompt, width=len(msg))
-    canvas = Canvas(root, width=500, height=400, bg='black')
+    label = Label(root, text=prompt, width=len(prompt))
     label.pack()
-    canvas.pack()
-
-    img = PhotoImage(file="img/siskin.png")
-    canvas.create_image(250, 200, image=img)
 
     def popup_box():
         root.destroy()
-
+        
     # 6 secs
     root.after(6000, popup_box)
     root.mainloop()

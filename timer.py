@@ -1,4 +1,21 @@
+#!/usr/bin/env python
+
+# Copyright 2021 Marcelo Sanches
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import os
+import html
 import time 
 import random 
 
@@ -176,38 +193,50 @@ if __name__ == '__main__':
     raw_stand_min = input("Set standing minutes: ")
     raw_times = input("How many times? ")
     
-    # TODO: sanitize input for SQL injections and the like
-    #
-    #
-    #
-    #
-    
+    # escape html
+    username = html.escape(raw_username)
+    sit_min = html.escape(raw_sit_min)
+    stand_min = html.escape(raw_stand_min)
+    times = html.escape(raw_times)    
+
     # validate user data
-    username = str(raw_username)
+    username = str(username)
     
-    if username:
-        pass
-    else:
-        print("Error: must provide a valid 'username'.")
+    try:
+        assert 1 <= len(username) <= 25
+    except AssertionError as e:
+        print("Error: 'username' must be at least 1 and at most 25 characters long.")
         exit(1)
 
     try:
         sit_min = float(raw_sit_min)
+        assert 0 <= sit_min <= 90
     except ValueError as e:
-        print("Error: 'sit_min' must be an integer or float.")
+        print("Error: 'sit_min' must be an integer or float.")        
         exit(1)
-      
+    except AssertionError as e:
+        print("Error: 'sit_min' must be between 0 and 90 inclusive.")
+        exit(1)
+       
     try:
         stand_min = float(raw_stand_min)
+        assert 0 <= stand_min <= 60
     except ValueError as e:
         print("Error: 'stand_min' must be an integer or float.")
+        exit(1)
+    except AssertionError as e:
+        print("Error: 'stand_min' must be between 0 and 60 inclusive.")
         exit(1)
     
     try:
         times = int(raw_times)
+        assert 1 <= times <= 10
     except ValueError as e:
         print("Error: 'times' must be an integer.")
         exit(1)
+    except AssertionError as e:
+        print("Error: 'times' must be between 1 and 10 inclusive.")
+        exit(1)          
         
     # calculate secs
     sit_sec = float(sit_min)*60
